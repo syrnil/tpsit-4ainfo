@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezioni di Vue.js</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .box { padding: 15px; border: 1px solid #ccc; margin-top: 10px; border-radius: 5px; background-color: #f9f9f9; }
+        .text-danger { color: red; }
+        .active { background-color: #d4edda; }
+    </style>
+</head>
+<body>
+
+
+    <div id="app">
+         <p>ESERCIZIO {{ESERCIZIO}}</p>
+        <p>nome {{nome}}</p>
+        <p>cognome {{cognome}}</p>
+        <p>moncalieri {{citta}}</p>
+        <p>NOME PRODOTTO: {{prodotto}} PREZZO: {{prezzo}}</p>
+    </div>
+
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+const { createApp } = Vue;
+
+
+createApp({
+    data() {
+        return {
+            ESERCIZIO:1,
+            nome:"simone",
+            cognome:"quarta",
+            citta:"moncalieri",
+            prodotto:"cereali",
+            prezzo:"5.50€",
+        }
+    }
+}).mount('#app');
+
+
