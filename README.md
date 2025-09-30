@@ -1,1 +1,0 @@
-# tpsit-4ainfo
