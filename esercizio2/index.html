@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>ES TPSIT - Esempio Vue</title>
+  <style>
+    .semaforo { margin: 8px 0; padding: 12px; color: #fff; width: 120px; text-align:center; border-radius:6px; }
+    .rosso { background:#c0392b; }
+    .giallo { background:#f39c12; color:#000; }
+    .verde { background:#27ae60; }
+    table { border-collapse: collapse; margin-top: 8px; }
+    table th, table td { border:1px solid #444; padding:6px 10px; }
+    button { margin:4px; }
+  </style>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 1) Login Utente -->
+    <section>
+      <p v-if="isLoggedIn">Benvenuto, Utente!</p>
+      <p v-else>Per favore, accedi.</p>
+      <button @click="toggleLogin">{{ isLoggedIn ? 'Logout' : 'Login' }}</button>
+    </section>
+
+    <!-- 2) Semaforo -->
+    <section>
+      <h3>Semaforo</h3>
+      <div v-if="coloreSemaforo === 'rosso'" class="semaforo rosso">Stop</div>
+      <div v-else-if="coloreSemaforo === 'giallo'" class="semaforo giallo">Attenzione</div>
+      <div v-else class="semaforo verde">Vai!</div>
+
+      <div>
+        <button @click="setSemaforo('rosso')">Rosso</button>
+        <button @click="setSemaforo('giallo')">Giallo</button>
+        <button @click="setSemaforo('verde')">Verde</button>
+      </div>
+    </section>
+
+    <!-- 3) Classifica -->
+    <section>
+      <h3>Classifica team preferiti</h3>
+      <ol>
+        <li v-for="team in teams" :key="team">{{ team }}</li>
+      </ol>
+    </section>
+
+    <!-- 4) Catalogo Prodotti -->
+    <section>
+      <h3>Catalogo Prodotti</h3>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Nome</th><th>Prezzo (€)</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="p in products" :key="p.id">
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+``` 
+
+Salva il file e apri index.html nel browser.<!-- filepath: c:\Users\simone.quarta\Desktop\es tpsit\es2\index.html -->
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>ES TPSIT - Esempio Vue</title>
+  <style>
+    .semaforo { margin: 8px 0; padding: 12px; color: #fff; width: 120px; text-align:center; border-radius:6px; }
+    .rosso { background:#c0392b; }
+    .giallo { background:#f39c12; color:#000; }
+    .verde { background:#27ae60; }
+    table { border-collapse: collapse; margin-top: 8px; }
+    table th, table td { border:1px solid #444; padding:6px 10px; }
+    button { margin:4px; }
+  </style>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app">
+    <!-- 1) Login Utente -->
+    <section>
+      <p v-if="isLoggedIn">Benvenuto, Utente!</p>
+      <p v-else>Per favore, accedi.</p>
+      <button @click="toggleLogin">{{ isLoggedIn ? 'Logout' : 'Login' }}</button>
+    </section>
+
+    <!-- 2) Semaforo -->
+    <section>
+      <h3>Semaforo</h3>
+      <div v-if="coloreSemaforo === 'rosso'" class="semaforo rosso">Stop</div>
+      <div v-else-if="coloreSemaforo === 'giallo'" class="semaforo giallo">Attenzione</div>
+      <div v-else class="semaforo verde">Vai!</div>
+
+      <div>
+        <button @click="setSemaforo('rosso')">Rosso</button>
+        <button @click="setSemaforo('giallo')">Giallo</button>
+        <button @click="setSemaforo('verde')">Verde</button>
+      </div>
+    </section>
+
+    <!-- 3) Classifica -->
+    <section>
+      <h3>Classifica team preferiti</h3>
+      <ol>
+        <li v-for="team in teams" :key="team">{{ team }}</li>
+      </ol>
+    </section>
+
+    <!-- 4) Catalogo Prodotti -->
+    <section>
+      <h3>Catalogo Prodotti</h3>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Nome</th><th>Prezzo (€)</th></tr>
+        </thead>
+        <tbody>
+          <tr v-for="p in products" :key="p.id">
+            <td>{{ p.id }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price.toFixed(2) }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
+``` 
+
+Salva il file e apri index.html nel browser.

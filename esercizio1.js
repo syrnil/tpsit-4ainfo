@@ -14,3 +14,4 @@ createApp({
             prodotto:"cereali",
             prezzo:"5.50€",
         }
+    }
