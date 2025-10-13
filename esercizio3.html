@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>esercizio3</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 800px; }
+        .box { padding: 15px; border: 1px solid #ccc; margin-top: 10px; border-radius: 5px; background-color: #f9f9f9; }
+        .inline { display:inline-block; margin-right:12px; }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+       <h2 class="box">0. Cambia Messaggio</h2>
+       <p>{{ messaggio }}</p>
+       <button @click="cambiaMessaggio">Cambia messaggio</button>
+
+       <h2 class="box">1. Accendi / Spegni</h2>
+       <p>Stato: <strong>{{ luceAccesa ? 'La luce è accesa' : 'La luce è spenta' }}</strong></p>
+       <button @click="toggleLuce">Toggle Luce</button>
+
+       <h2 class="box">2. Convertitore Kg → g</h2>
+       <label>
+         Inserisci kg:
+         <input type="number" v-model.number="kg" step="any" />
+       </label>
+       <p>Grammi: <strong>{{ grammi }}</strong> g</p>
+
+       <h2 class="box">3. Form di Registrazione Semplice</h2>
+       <form @submit.prevent>
+         <label>
+           Nome:
+           <input type="text" v-model="nome" />
+         </label>
+
+         <div style="margin-top:8px;">
+           Genere:
+           <label class="inline"><input type="radio" value="Uomo" v-model="genere" name="genere" /> Uomo</label>
+           <label class="inline"><input type="radio" value="Donna" v-model="genere" name="genere" /> Donna</label>
+           <label class="inline"><input type="radio" value="Non binario" v-model="genere" name="genere" /> Non binario</label>
+         </div>
+
+         <div style="margin-top:8px;">
+           Paese:
+           <label class="inline"><input type="radio" value="Italia" v-model="paese" name="paese" /> Italia</label>
+           <label class="inline"><input type="radio" value="Germania" v-model="paese" name="paese" /> Germania</label>
+           <label class="inline"><input type="radio" value="Giappone" v-model="paese" name="paese" /> Giappone</label>
+         </div>
+       </form>
+
+       <h3>Riepilogo</h3>
+       <p>Nome: <strong>{{ nome || '-' }}</strong></p>
+       <p>Genere: <strong>{{ genere }}</strong></p>
+       <p>Paese: <strong>{{ paese }}</strong></p>
+
+    </div>
+
+    <script src="https://unpkg.com/vue@3"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
