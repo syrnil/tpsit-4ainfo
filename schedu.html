@@ -4,211 +4,199 @@
   <meta charset="UTF-8" />
   <title>Simulatore Scheduling CPU</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; max-width: 900px; margin: auto; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; max-width: 800px; margin: auto; }
+    h1 { color: #333; }
+    textarea { width: 100%; height: 150px; font-family: monospace; font-size: 14px; }
+    button { padding: 10px 15px; margin: 10px 5px 20px 0; cursor: pointer; font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
-    input[type=number] { width: 80px; }
-    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
-    .result-section { margin-top: 30px; }
+    th { background-color: #eee; }
+    .results { margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <h1>Simulatore Algoritmi di Scheduling</h1>
+  <h1>Simulatore di Algoritmi di Scheduling CPU</h1>
 
-  <p>Inserisci i dati dei processi (nome, tempo di arrivo, tempo di esecuzione):</p>
+  <label for="jsonInput"><strong>Inserisci i task in formato JSON:</strong></label>
+  <textarea id="jsonInput">
+{
+  "tasks": [
+    { "id": "P1", "arrival_time": 0, "burst_time": 8 },
+    { "id": "P2", "arrival_time": 1, "burst_time": 4 },
+    { "id": "P3", "arrival_time": 2, "burst_time": 9 },
+    { "id": "P4", "arrival_time": 3, "burst_time": 5 }
+  ]
+}
+  </textarea>
 
-  <form id="processForm">
-    <table>
-      <thead>
-        <tr>
-          <th>Processo</th>
-          <th>Tempo di Arrivo (ms)</th>
-          <th>Tempo di Esecuzione (ms)</th>
-        </tr>
-      </thead>
-      <tbody id="processTableBody">
-        <tr>
-          <td><input type="text" name="name" value="P1" required></td>
-          <td><input type="number" name="arrival" value="0" min="0" required></td>
-          <td><input type="number" name="burst" value="20" min="1" required></td>
-        </tr>
-        <tr>
-          <td><input type="text" name="name" value="P2" required></td>
-          <td><input type="number" name="arrival" value="8" min="0" required></td>
-          <td><input type="number" name="burst" value="5" min="1" required></td>
-        </tr>
-        <tr>
-          <td><input type="text" name="name" value="P3" required></td>
-          <td><input type="number" name="arrival" value="3" min="0" required></td>
-          <td><input type="number" name="burst" value="12" min="1" required></td>
-        </tr>
-        <tr>
-          <td><input type="text" name="name" value="P4" required></td>
-          <td><input type="number" name="arrival" value="10" min="0" required></td>
-          <td><input type="number" name="burst" value="6" min="1" required></td>
-        </tr>
-        <tr>
-          <td><input type="text" name="name" value="P5" required></td>
-          <td><input type="number" name="arrival" value="7" min="0" required></td>
-          <td><input type="number" name="burst" value="8" min="1" required></td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="submit">Calcola Scheduling</button>
-  </form>
+  <br />
+  <button type="button" onclick="simulate()">Simula Scheduling</button>
+  <button type="button" onclick="generateTasks()">Genera Task Casuali</button>
 
-  <div class="result-section" id="results"></div>
+  <div class="results" id="results"></div>
 
 <script>
-  document.getElementById('processForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const rows = [...document.querySelectorAll('#processTableBody tr')];
-    const processi = rows.map(row => {
-      const name = row.querySelector('input[name="name"]').value.trim();
-      const arrival = parseInt(row.querySelector('input[name="arrival"]').value);
-      const burst = parseInt(row.querySelector('input[name="burst"]').value);
-      return { name, arrival, burst };
-    });
-
-    mostraRisultati(processi);
-  });
-
-  function mostraRisultati(processi) {
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '';
-
-    const fcfs = fcfsScheduling(processi);
-    const sjf = sjfScheduling(processi);
-    const srtf = srtfScheduling(processi);
-
-    resultsDiv.innerHTML += `<h2>FCFS (First Come First Served)</h2>${generaTabella(fcfs)}`;
-    resultsDiv.innerHTML += `<h2>SJF (Shortest Job First)</h2>${generaTabella(sjf)}`;
-    resultsDiv.innerHTML += `<h2>SRTF (Shortest Remaining Time First)</h2>${generaTabella(srtf)}`;
+  function avg(arr) {
+    if (!arr || arr.length === 0) return "0.00";
+    return (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2);
   }
 
-  function fcfsScheduling(input) {
-    const processi = JSON.parse(JSON.stringify(input)).sort((a, b) => a.arrival - b.arrival);
-    let tempo = 0;
-    const output = [];
+  function fcfs(tasks) {
+    tasks.sort((a, b) => a.arrival_time - b.arrival_time);
+    let time = 0, waiting = [], turnaround = [];
 
-    for (let p of processi) {
-      if (tempo < p.arrival) tempo = p.arrival;
-      const completion = tempo + p.burst;
-      const turnaround = completion - p.arrival;
-      const waiting = turnaround - p.burst;
-
-      output.push({ ...p, completion, turnaround, waiting });
-      tempo = completion;
+    for (let task of tasks) {
+      if (time < task.arrival_time) time = task.arrival_time;
+      let wait = time - task.arrival_time;
+      let tat = wait + task.burst_time;
+      waiting.push(wait);
+      turnaround.push(tat);
+      time += task.burst_time;
     }
-
-    return output;
+    return [avg(waiting), avg(turnaround)];
   }
 
-  function sjfScheduling(input) {
-    const processi = JSON.parse(JSON.stringify(input));
-    const n = processi.length;
-    const completati = [];
-    let tempo = 0;
+  function ssjf(tasks) {
+    let time = 0, index = 0;
+    let ready = [], done = [], waiting = [], turnaround = [];
+    tasks.sort((a, b) => a.arrival_time - b.arrival_time);
 
-    while (completati.length < n) {
-      const disponibili = processi.filter(p => p.arrival <= tempo && !completati.includes(p));
-      if (disponibili.length === 0) {
-        tempo++;
-        continue;
+    while (done.length < tasks.length) {
+      while (index < tasks.length && tasks[index].arrival_time <= time) {
+        ready.push(tasks[index]);
+        index++;
       }
 
-      const next = disponibili.sort((a, b) => a.burst - b.burst)[0];
-      const completion = tempo + next.burst;
-      const turnaround = completion - next.arrival;
-      const waiting = turnaround - next.burst;
-
-      completati.push({ ...next, completion, turnaround, waiting });
-      tempo = completion;
+      if (ready.length > 0) {
+        ready.sort((a, b) => a.burst_time - b.burst_time);
+        let task = ready.shift();
+        let wait = time - task.arrival_time;
+        wait = Math.max(0, wait);
+        let tat = wait + task.burst_time;
+        waiting.push(wait);
+        turnaround.push(tat);
+        time += task.burst_time;
+        done.push(task);
+      } else {
+        time++;
+      }
     }
-
-    return completati;
+    return [avg(waiting), avg(turnaround)];
   }
 
-  function srtfScheduling(input) {
-    const processi = JSON.parse(JSON.stringify(input));
-    const n = processi.length;
-    let tempo = 0;
-    let completati = 0;
-    const stato = processi.map(p => ({
-      ...p,
-      remaining: p.burst,
-      completion: 0
-    }));
-    const output = [];
+  function srtf(tasks) {
+    tasks.sort((a, b) => a.arrival_time - b.arrival_time);
 
-    while (completati < n) {
-      const attivi = stato.filter(p => p.arrival <= tempo && p.remaining > 0);
-      if (attivi.length === 0) {
-        tempo++;
-        continue;
-      }
+    let time = 0, index = 0;
+    let n = tasks.length;
+    let remaining = {}, start = {}, complete = {};
+    let waiting = [], turnaround = [];
 
-      attivi.sort((a, b) => a.remaining - b.remaining);
-      const current = attivi[0];
-      current.remaining--;
-
-      if (current.remaining === 0) {
-        current.completion = tempo + 1;
-        current.turnaround = current.completion - current.arrival;
-        current.waiting = current.turnaround - current.burst;
-        output.push({ ...current });
-        completati++;
-      }
-
-      tempo++;
+    for (let task of tasks) {
+      remaining[task.id] = task.burst_time;
+      start[task.id] = -1;
     }
 
-    // Ordino per nome per comodità di visualizzazione
-    return output.sort((a,b) => a.name.localeCompare(b.name));
+    let ready = [];
+
+    while (Object.keys(complete).length < n) {
+      while (index < n && tasks[index].arrival_time <= time) {
+        ready.push(tasks[index]);
+        index++;
+      }
+
+      if (ready.length > 0) {
+        ready.sort((a, b) => remaining[a.id] - remaining[b.id]);
+        let task = ready[0];
+
+        if (start[task.id] === -1) {
+          start[task.id] = time;
+        }
+
+        remaining[task.id]--;
+        time++;
+
+        if (remaining[task.id] === 0) {
+          complete[task.id] = time;
+          let tat = complete[task.id] - task.arrival_time;
+          let wt = tat - task.burst_time;
+          turnaround.push(tat);
+          waiting.push(wt);
+          ready = ready.filter(t => t.id !== task.id);
+        }
+      } else {
+        if (index < n) {
+          time = Math.max(time + 1, tasks[index].arrival_time);
+        } else {
+          time++;
+        }
+      }
+    }
+
+    return [avg(waiting), avg(turnaround)];
   }
 
-  function generaTabella(dati) {
-    const head = `
-      <table>
-      <thead>
-        <tr>
-          <th>Processo</th>
-          <th>Arrivo</th>
-          <th>Esecuzione</th>
-          <th>Completamento</th>
-          <th>Turnaround</th>
-          <th>Attesa</th>
-        </tr>
-      </thead>
-      <tbody>
-    `;
-    const rows = dati.map(p => `
-      <tr>
-        <td>${p.name}</td>
-        <td>${p.arrival}</td>
-        <td>${p.burst}</td>
-        <td>${p.completion}</td>
-        <td>${p.turnaround}</td>
-        <td>${p.waiting}</td>
-      </tr>
-    `).join('');
+  function simulate() {
+    try {
+      const json = document.getElementById("jsonInput").value;
+      const data = JSON.parse(json);
+      const tasks = data.tasks;
 
-    const mediaTurnaround = (dati.reduce((s, p) => s + p.turnaround, 0) / dati.length).toFixed(2);
-    const mediaAttesa = (dati.reduce((s, p) => s + p.waiting, 0) / dati.length).toFixed(2);
+      if (!Array.isArray(tasks) || tasks.length === 0) {
+        alert("Inserisci almeno un task nel JSON.");
+        return;
+      }
 
-    const footer = `
-      </tbody></table>
-      <p><strong>Tempo medio di Turnaround:</strong> ${mediaTurnaround} ms</p>
-      <p><strong>Tempo medio di Attesa:</strong> ${mediaAttesa} ms</p>
-    `;
+      const fcfsResult = fcfs([...tasks]);
+      const ssjfResult = ssjf([...tasks]);
+      const srtfResult = srtf([...tasks]);
 
-    return head + rows + footer;
+      const html = `
+        <h2>Risultati</h2>
+        <table>
+          <tr>
+            <th>Algoritmo</th>
+            <th>Tempo Medio di Attesa</th>
+            <th>Tempo Medio di Turnaround</th>
+          </tr>
+          <tr>
+            <td>FCFS</td>
+            <td>${fcfsResult[0]}</td>
+            <td>${fcfsResult[1]}</td>
+          </tr>
+          <tr>
+            <td>SSJF</td>
+            <td>${ssjfResult[0]}</td>
+            <td>${ssjfResult[1]}</td>
+          </tr>
+          <tr>
+            <td>SRTF</td>
+            <td>${srtfResult[0]}</td>
+            <td>${srtfResult[1]}</td>
+          </tr>
+        </table>
+      `;
+
+      document.getElementById("results").innerHTML = html;
+    } catch (err) {
+      alert("Errore nel parsing JSON o nella simulazione. Controlla il formato dei dati.");
+      console.error(err);
+    }
+  }
+
+  function generateTasks(n = 5) {
+    let tasks = [];
+    for (let i = 1; i <= n; i++) {
+      tasks.push({
+        id: "P" + i,
+        arrival_time: Math.floor(Math.random() * 10),
+        burst_time: Math.floor(Math.random() * 10) + 1
+      });
+    }
+    document.getElementById("jsonInput").value = JSON.stringify({ tasks }, null, 2);
   }
 </script>
 
 </body>
 </html>
-
