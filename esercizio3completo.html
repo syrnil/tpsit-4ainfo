@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esercizio Vue</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; max-width: 800px; }
+    .box { padding: 15px; border: 1px solid #ccc; margin-top: 10px; border-radius: 5px; background-color: #f9f9f9; }
+    .inline { display:inline-block; margin-right:12px; }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- 0. Cambia Messaggio -->
+    <h2 class="box">0. Cambia Messaggio</h2>
+    <p>{{ messaggio }}</p>
+    <button @click="cambiaMessaggio">Cambia messaggio</button>
+
+    <!-- 1. Accendi / Spegni -->
+    <h2 class="box">1. Accendi / Spegni</h2>
+    <p>Stato: <strong>{{ luceAccesa ? 'La luce è accesa' : 'La luce è spenta' }}</strong></p>
+    <button @click="toggleLuce">Toggle Luce</button>
+
+    <!-- 2. Convertitore -->
+    <h2 class="box">2. Convertitore Kg → g</h2>
+    <label>
+      Inserisci kg:
+      <input type="number" v-model.number="kg" step="any" />
+    </label>
+    <p>Grammi: <strong>{{ grammi }}</strong> g</p>
+
+    <!-- 3. Form registrazione -->
+    <h2 class="box">3. Form di Registrazione Semplice</h2>
+    <form @submit.prevent="inviaModulo">
+      <label>
+        Nome:
+        <input type="text" v-model="nome" />
+      </label>
+
+      <div style="margin-top:8px;">
+        Genere:
+        <label class="inline"><input type="radio" value="Uomo" v-model="genere" name="genere" /> Uomo</label>
+        <label class="inline"><input type="radio" value="Donna" v-model="genere" name="genere" /> Donna</label>
+        <label class="inline"><input type="radio" value="Non binario" v-model="genere" name="genere" /> Non binario</label>
+      </div>
+
+      <div style="margin-top:8px;">
+        Paese:
+        <label class="inline"><input type="radio" value="Italia" v-model="paese" name="paese" /> Italia</label>
+        <label class="inline"><input type="radio" value="Germania" v-model="paese" name="paese" /> Germania</label>
+        <label class="inline"><input type="radio" value="Giappone" v-model="paese" name="paese" /> Giappone</label>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button type="submit">Invia</button>
+      </div>
+    </form>
+
+    <h3>Riepilogo</h3>
+    <p>Nome: <strong>{{ nome || '-' }}</strong></p>
+    <p>Genere: <strong>{{ genere }}</strong></p>
+    <p>Paese: <strong>{{ paese }}</strong></p>
+  </div>
+
+  <!-- VueJS -->
+  <script src="https://unpkg.com/vue@3"></script>
+
+  <!-- Script dell'app Vue -->
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          // 0. Cambia Messaggio
+          messaggio: 'Clicca il bottone',
+          // 1. Accendi/Spegni
+          luceAccesa: false,
+          // 2. Convertitore
+          kg: 0,
+          // 3. Form registrazione
+          nome: '',
+          genere: 'Uomo',
+          paese: 'Italia'
+        };
+      },
+      computed: {
+        grammi() {
+          return (Number(this.kg) || 0) * 1000;
+        }
+      },
+      methods: {
+        mostraMessaggio(msg) {
+          alert(msg);
+        },
+        inviaModulo() {
+          alert('Modulo inviato con successo!');
+        },
+        cambiaMessaggio() {
+          this.messaggio = 'Hai cliccato il bottone!';
+        },
+        toggleLuce() {
+          this.luceAccesa = !this.luceAccesa;
+        }
+      }
+    }).mount('#app');
+  </script>
+
+</body>
+</html>
