@@ -1,33 +1,42 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <title>Simulazione Scheduling</title>
+  <meta charset="UTF-8">
+  <title>Simulatore Scheduling CPU</title>
+  <link rel="stylesheet" href="style.css"> <!-- se vuoi aggiungere uno stile esterno -->
   <style>
-    table, th, td {
-      border: 1px solid black;
-      border-collapse: collapse;
-      padding: 8px;
-    }
-    th {
-      background-color: #f0f0f0;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { color: #333; }
+    textarea { width: 100%; height: 150px; font-family: monospace; }
+    button { padding: 10px 15px; margin: 10px 0; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #eee; }
+    .results { margin-top: 20px; }
   </style>
 </head>
 <body>
 
-  <h1>Simulazione Algoritmi di Scheduling</h1>
+  <h1>Simulatore di Algoritmi di Scheduling CPU</h1>
 
-  <textarea id="jsonInput" rows="10" cols="60" placeholder='Inserisci i task in JSON, es: {"tasks":[{"id":"P1","arrival_time":0,"burst_time":5}]}'>
+  <label for="jsonInput"><strong>Inserisci i task in formato JSON:</strong></label>
+  <textarea id="jsonInput">
+{
+  "tasks": [
+    { "id": "P1", "arrival_time": 0, "burst_time": 8 },
+    { "id": "P2", "arrival_time": 1, "burst_time": 4 },
+    { "id": "P3", "arrival_time": 2, "burst_time": 9 },
+    { "id": "P4", "arrival_time": 3, "burst_time": 5 }
+  ]
+}
   </textarea>
-  <br/>
-  <button onclick="simulate()">Simula</button>
 
-  <div id="results"></div>
+  <button type="button" onclick="simulate()">Simula Scheduling</button>
+  <button type="button" onclick="generateTasks()">Genera Task Casuali</button>
 
-  <!-- Qui carichiamo il file JS, assicurati che sia nella stessa cartella -->
-  <script src="scheduling.js"></script>
+  <div class="results" id="results"></div>
+
+  <script src="./scheduling.js"></script>
 
 </body>
 </html>
-
