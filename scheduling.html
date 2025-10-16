@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Simulatore Scheduling CPU</title>
+  <link rel="stylesheet" href="style.css"> <!-- se vuoi aggiungere uno stile esterno -->
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
+    h1 { color: #333; }
+    textarea { width: 100%; height: 150px; }
+    button { padding: 10px 15px; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #eee; }
+    .results { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Simulatore di Algoritmi di Scheduling CPU</h1>
+
+  <label for="jsonInput"><strong>Inserisci i task in formato JSON:</strong></label>
+  <textarea id="jsonInput">
+{
+  "tasks": [
+    { "id": "P1", "arrival_time": 0, "burst_time": 8 },
+    { "id": "P2", "arrival_time": 1, "burst_time": 4 },
+    { "id": "P3", "arrival_time": 2, "burst_time": 9 },
+    { "id": "P4", "arrival_time": 3, "burst_time": 5 }
+  ]
+}
+  </textarea>
+
+  <button type="button" onclick="simulate()">Simula Scheduling</button>
+  <button type="button" onclick="generateTasks()">Genera Task Casuali</button>
+
+  <div class="results" id="results"></div>
+
+  <script src="./schedu.js"></script>
+
+</body>
+</html>
