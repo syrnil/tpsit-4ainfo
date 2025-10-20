@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <title>Esercizio 4 - Vue</title>
+  <style>
+    body { font-family: sans-serif; padding:20px; }
+    .error { color: red; }
+    table { border-collapse: collapse; margin-top:8px; }
+    th, td { border:1px solid #666; padding:6px 8px; }
+    .status { margin-top:8px; font-style: italic; }
+  </style>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h2>1. Controllo Maggiore Età</h2>
+    <label>Età: <input type="number" v-model.number="eta" min="0"></label>
+    <p>Messaggio: <strong>{{ messaggioEta }}</strong></p>
+
+    <h2>2. Carrello Semplice</h2>
+    <table>
+      <thead><tr><th>Nome</th><th>Prezzo (€)</th></tr></thead>
+      <tbody>
+        <tr v-for="(p, i) in carrello" :key="i">
+          <td>{{ p.nome }}</td>
+          <td>{{ p.prezzo.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr><th>Totale</th><th>{{ totaleCarrello.toFixed(2) }} €</th></tr>
+      </tfoot>
+    </table>
+
+    <h2>3. Validazione Input (username)</h2>
+    <label>Username: <input v-model="username"></label>
+    <p v-if="usernameError" class="error">{{ usernameError }}</p>
+
+    <h2>4. Salvataggio Automatico</h2>
+    <textarea v-model="nota" rows="5" cols="50" placeholder="Scrivi qualcosa..."></textarea>
+    <p class="status">{{ savingMessage }}</p>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          // 1
+          eta: 17,
+
+          // 2
+          carrello: [
+            { nome: 'Mela d oro', prezzo: 41.98 },
+            { nome: 'pastasfoglia', prezzo: 10.50 }
+          ],
+
+          // 3
+          username: '',
+          usernameError: '',
+
+          // 4
+          nota: '',
+          savingMessage: '',
+          _saveTimer: null
+        };
+      },
+      computed: {
+        // 1
+        messaggioEta() {
+          return this.eta >= 18 ? 'Maggiorenne' : 'Minorenne';
+        },
+        // 2
+        totaleCarrello() {
+          return this.carrello.reduce((s, p) => s + (Number(p.prezzo) || 0), 0);
+        }
+      },
+      watch: {
+        // 3
+        username(n) {
+          if (!n) {
+            this.usernameError = '';
+            return;
+          }
+          this.usernameError = n.length < 5 ? 'Username troppo corto (min 5 caratteri)' : '';
+        },
+        // 4
+        nota() {
+          this.savingMessage = 'Sto salvando...';
+
+          if (this._saveTimer) clearTimeout(this._saveTimer);
+
+          this._saveTimer = setTimeout(() => {
+            this.savingMessage = 'Salvato!';
+            this._saveTimer = null;
+          }, 1000);
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
