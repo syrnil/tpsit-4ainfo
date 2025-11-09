@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Esercizi Vue.js - Props & Eventi</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    /* ---- Product Card ---- */
+    .product-card {
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
+      margin: 5px;
+      display: inline-block;
+      width: 160px;
+      text-align: center;
+    }
+
+    /* ---- Alert Box ---- */
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      color: white;
+      margin: 5px 0;
+    }
+    .success { background-color: #4caf50; }
+    .error { background-color: #f44336; }
+
+    /* ---- Modal ---- */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      min-width: 300px;
+    }
+
+    /* ---- Star Rating ---- */
+    .stars button {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #ccc;
+    }
+    .stars button.active {
+      color: gold;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <h2>1️⃣ Lista Prodotti</h2>
+  <div>
+    <product-card
+      v-for="(p, index) in prodotti"
+      :key="index"
+      :nome-prodotto="p.nome"
+      :prezzo="p.prezzo">
+    </product-card>
+  </div>
+
+  <h2>2️⃣ Alert Box</h2>
+  <alert-box messaggio="Operazione riuscita!" tipo="success"></alert-box>
+  <alert-box messaggio="Errore durante il salvataggio." tipo="error"></alert-box>
+
+  <h2>3️⃣ Modale</h2>
+  <button @click="modaleAperta = true">Apri Modale</button>
+  <modal-dialog v-if="modaleAperta" @chiudi="modaleAperta = false">
+    <h3>Benvenuto nella Modale!</h3>
+    <p>Questo è il contenuto del componente modale.</p>
+  </modal-dialog>
+
+  <h2>4️⃣ Valutazione a Stelle</h2>
+  <star-rating
+    :valutazione-corrente="valutazione"
+    @imposta-valutazione="valutazione = $event">
+  </star-rating>
+  <p>Valutazione selezionata: {{ valutazione }}</p>
+</div>
+
+<script>
+const { createApp, ref } = Vue;
+
+// ----------------------
+// 1️⃣ Product Card
+// ----------------------
+const ProductCard = {
+  props: ['nomeProdotto', 'prezzo'],
+  template: `
+    <div class="product-card">
+      <h3>{{ nomeProdotto }}</h3>
+      <p>Prezzo: €{{ prezzo.toFixed(2) }}</p>
+    </div>
+  `
+};
+
+// ----------------------
+// 2️⃣ Alert Box
+// ----------------------
+const AlertBox = {
+  props: {
+    messaggio: String,
+    tipo: {
+      type: String,
+      validator: value => ['success', 'error'].includes(value)
+    }
+  },
+  template: `
+    <div :class="['alert', tipo]">{{ messaggio }}</div>
+  `
+};
+
+// ----------------------
+// 3️⃣ Modale
+// ----------------------
+const ModalDialog = {
+  emits: ['chiudi'],
+  template: `
+    <div class="modal">
+      <div class="modal-content">
+        <slot></slot>
+        <br><br>
+        <button @click="$emit('chiudi')">Chiudi</button>
+      </div>
+    </div>
+  `
+};
+
+// ----------------------
+// 4️⃣ Valutazione a Stelle
+// ----------------------
+const StarRating = {
+  props: ['valutazioneCorrente'],
+  emits: ['imposta-valutazione'],
+  template: `
+    <div class="stars">
+      <button
+        v-for="i in 5"
+        :key="i"
+        @click="$emit('imposta-valutazione', i)"
+        :class="{ active: i <= valutazioneCorrente }"
+      >★</button>
+    </div>
+  `
+};
+
+// ----------------------
+// APP PRINCIPALE
+// ----------------------
+createApp({
+  components: {
+    ProductCard,
+    AlertBox,
+    ModalDialog,
+    StarRating
+  },
+  setup() {
+    const prodotti = ref([
+      { nome: 'Laptop', prezzo: 1200 },
+      { nome: 'Mouse', prezzo: 25 },
+      { nome: 'Monitor', prezzo: 220 }
+    ]);
+
+    const modaleAperta = ref(false);
+    const valutazione = ref(0);
+
+    return { prodotti, modaleAperta, valutazione };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>
