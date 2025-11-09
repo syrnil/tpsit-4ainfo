@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Esercizi Componenti con HTML + JS</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+
+  /* ---- Product Card ---- */
+  .product-card {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    margin: 5px;
+    display: inline-block;
+    width: 150px;
+    text-align: center;
+  }
+
+  /* ---- Alert Box ---- */
+  .alert {
+    padding: 10px;
+    border-radius: 5px;
+    color: white;
+    margin: 5px 0;
+  }
+  .success { background-color: #4caf50; }
+  .error { background-color: #f44336; }
+
+  /* ---- Modal ---- */
+  .modal {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+  }
+
+  /* ---- Star Rating ---- */
+  .stars button {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #ccc;
+  }
+  .stars button.active {
+    color: gold;
+  }
+</style>
+</head>
+<body>
+
+<h2>1️⃣ Lista Prodotti</h2>
+<div id="prodotti-container"></div>
+
+<h2>2️⃣ Alert Box</h2>
+<div id="alert-container"></div>
+
+<h2>3️⃣ Modale</h2>
+<button id="apri-modale">Apri Modale</button>
+
+<h2>4️⃣ Valutazione a Stelle</h2>
+<div id="rating-container"></div>
+<p>Valutazione selezionata: <span id="valutazione-testuale">0</span></p>
+
+<script>
+// ----------------------
+// 1️⃣ Product Card
+// ----------------------
+function creaProductCard(nomeProdotto, prezzo) {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.innerHTML = `
+    <h3>${nomeProdotto}</h3>
+    <p>Prezzo: €${prezzo.toFixed(2)}</p>
+  `;
+  return card;
+}
+
+const prodotti = [
+  { nome: 'Laptop', prezzo: 1200 },
+  { nome: 'Mouse', prezzo: 25 },
+  { nome: 'Monitor', prezzo: 220 }
+];
+
+const prodottiContainer = document.getElementById('prodotti-container');
+prodotti.forEach(p => {
+  prodottiContainer.appendChild(creaProductCard(p.nome, p.prezzo));
+});
+
+
+// ----------------------
+// 2️⃣ Alert Box
+// ----------------------
+function creaAlertBox(messaggio, tipo) {
+  const alert = document.createElement('div');
+  alert.className = `alert ${tipo}`;
+  alert.textContent = messaggio;
+  return alert;
+}
+
+const alertContainer = document.getElementById('alert-container');
+alertContainer.appendChild(creaAlertBox('Operazione riuscita!', 'success'));
+alertContainer.appendChild(creaAlertBox('Errore durante il salvataggio!', 'error'));
+
+
+// ----------------------
+// 3️⃣ Modale con evento "chiudi"
+// ----------------------
+function creaModal(contenuto, onClose) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal';
+  overlay.innerHTML = `
+    <div class="modal-content">
+      ${contenuto}
+      <br><br>
+      <button id="chiudi-modale">Chiudi</button>
+    </div>
+  `;
+
+  overlay.querySelector('#chiudi-modale').addEventListener('click', () => {
+    document.body.removeChild(overlay);
+    if (onClose) onClose(); // evento chiudi
+  });
+
+  return overlay;
+}
+
+document.getElementById('apri-modale').addEventListener('click', () => {
+  const modale = creaModal('<h3>Benvenuto nella modale!</h3>', () => {
+    console.log('Evento chiudi ricevuto → modale chiusa');
+  });
+  document.body.appendChild(modale);
+});
+
+
+// ----------------------
+// 4️⃣ Valutazione a Stelle
+// ----------------------
+function creaStarRating(onValutazione) {
+  const container = document.createElement('div');
+  container.className = 'stars';
+  let valutazioneCorrente = 0;
+
+  for (let i = 1; i <= 5; i++) {
+    const btn = document.createElement('button');
+    btn.innerHTML = '★';
+    btn.addEventListener('click', () => {
+      valutazioneCorrente = i;
+      aggiornaStelle();
+      if (onValutazione) onValutazione(valutazioneCorrente);
+    });
+    container.appendChild(btn);
+  }
+
+  function aggiornaStelle() {
+    const bottoni = container.querySelectorAll('button');
+    bottoni.forEach((b, idx) => {
+      b.classList.toggle('active', idx < valutazioneCorrente);
+    });
+  }
+
+  return container;
+}
+
+const ratingContainer = document.getElementById('rating-container');
+const valutazioneTesto = document.getElementById('valutazione-testuale');
+
+ratingContainer.appendChild(creaStarRating(val => {
+  valutazioneTesto.textContent = val;
+}));
+</script>
+
+</body>
+</html>
